@@ -2,13 +2,11 @@
 
 ## Tabla de Contenidos
 
-- [Weather App](#weather-app)
-  - [Tabla de Contenidos](#tabla-de-contenidos)
-  - [Descripción](#descripción)
-  - [Tecnologías Utilizadas](#tecnologías-utilizadas)
-  - [APIs Utilizadas](#apis-utilizadas)
-  - [Instalación](#instalación)
-  - [Autores](#autores)
+- [Descripción](#descripción)
+- [Tecnologías Utilizadas](#tecnologías-utilizadas)
+- [APIs Utilizadas](#apis-utilizadas)
+- [Instalación](#instalación)
+- [Autores](#autores)
 
 ## Descripción
 
