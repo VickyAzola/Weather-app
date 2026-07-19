@@ -1,0 +1,72 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display-DMSansVariable: 'DM Sans Variable', sans-serif;
+  --font-display-BricolageGrotesque: 'Bricolage Grotesque', sans-serif;
+
+  --color-NeutralBlue-900: hsl(243, 96%, 9%);
+  --color-NeutralBlue-800: hsl(243, 27%, 20%);
+  --color-NeutralBlue-700: hsl(243, 23%, 24%);
+  --color-NeutralBlue-600: hsl(243, 23%, 30%);
+  --color-NeutralGray-300: hsl(240, 6%, 70%);
+  --color-NeutralGray-200: hsl(250, 6%, 84%);
+  --color-NeutralWhite-0: hsl(0, 0%, 100%);
+  --color-Orange-500: hsl(28, 100%, 52%);
+  --color-Blue-500: hsl(233, 67%, 56%);
+  --color-Blue-700: hsl(248, 70%, 36%);
+}
+
+body {
+  font-family: 'DM Sans Variable', sans-serif;;
+  font-size: 18px;
+  background-color: hsl(243, 96%, 9%);
+  max-width: 1440px;
+  margin: auto;
+}
+
+/* Hourly forecast scrollbar */
+.overflow-y-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(243, 23%, 38%) hsl(243, 27%, 20%);
+  scrollbar-gutter: stable;
+}
+
+.overflow-y-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+
+.overflow-y-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.overflow-y-scroll::-webkit-scrollbar-thumb {
+  background: linear-gradient(
+    to bottom,
+    hsl(243, 23%, 40%),
+    hsl(243, 23%, 30%)
+  );
+  border-radius: 999px;
+  border: 2px solid hsl(243, 27%, 20%);
+}
+
+.overflow-y-scroll::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(
+    to bottom,
+    hsl(243, 23%, 48%),
+    hsl(243, 23%, 36%)
+  );
+}
+
+@media (pointer: coarse) {
+  .overflow-y-scroll {
+    scrollbar-width: thin;
+  }
+
+  .overflow-y-scroll::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  .overflow-y-scroll::-webkit-scrollbar-thumb {
+    border-width: 1px;
+  }
+}
