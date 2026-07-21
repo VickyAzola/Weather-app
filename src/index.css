@@ -20,6 +20,9 @@ body {
   font-family: 'DM Sans Variable', sans-serif;;
   font-size: 18px;
   background-color: hsl(243, 96%, 9%);
+}
+
+header, main {
   max-width: 1440px;
   margin: auto;
 }

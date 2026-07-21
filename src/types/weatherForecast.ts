@@ -66,6 +66,17 @@ interface WeatherForecastCurrentStatViewItem {
   value: string;
 }
 
+type TemperatureUnit = "celsius" | "fahrenheit";
+type WindSpeedUnit = "kmh" | "mph";
+type PrecipitationUnit = "mm" | "inch";
+type WeatherUnitMode = "metric" | "imperial";
+
+interface WeatherForecastUnits {
+  temperatureUnit: TemperatureUnit;
+  windSpeedUnit: WindSpeedUnit;
+  precipitationUnit: PrecipitationUnit;
+}
+
 interface WeatherForecastViewModel {
   date: string;
   currentTemperature: string;
@@ -86,5 +97,10 @@ export type {
   WeatherForecastDailyViewItem,
   WeatherForecastHourlyViewItem,
   WeatherForecastCurrentStatViewItem,
+  TemperatureUnit,
+  WindSpeedUnit,
+  PrecipitationUnit,
+  WeatherUnitMode,
+  WeatherForecastUnits,
   WeatherForecastViewModel,
 };

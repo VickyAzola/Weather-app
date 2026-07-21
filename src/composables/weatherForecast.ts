@@ -9,7 +9,7 @@ import type {
 const roundValue = (value: number) => Math.round(value).toString();
 const formatHumidity = (value: number) => `${roundValue(value)}%`;
 const formatWindSpeed = (value: number) => `${roundValue(value)} km/h`;
-const formatPrecipitation = (value: number) => `${roundValue(value)} mm`;
+const formatPrecipitation = (value: number) => `${Number(value.toFixed(1))} mm`;
 const roundTemperature = (value: number) => `${Math.round(value)}°`;
 
 
