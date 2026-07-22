@@ -3,9 +3,13 @@ import searchLocation from "./services/geocoding";
 import { useState, useEffect, type SubmitEvent, type ChangeEvent } from "react";
 import type { GeocodingResult } from "./types/geocoding";
 import { transformWeatherForecast } from "./composables/weatherForecast";
-import type { WeatherForecastViewModel } from "./types/weatherForecast";
+import type {
+  WeatherForecastUnits,
+  WeatherForecastViewModel,
+} from "./types/weatherForecast";
 import WeatherView from "./views/WeatherView";
 import ErrorView from "./views/ErrorView";
+import { DEFAULT_LOCATION, DEFAULT_WEATHER_UNITS } from "./constants/weather";
 
 function App() {
   const [hasSearched, setHasSearched] = useState<boolean>(false);
@@ -14,6 +18,9 @@ function App() {
   const [selectedLocation, setSelectedLocation] =
     useState<GeocodingResult | null>(null);
   const [weather, setWeather] = useState<WeatherForecastViewModel | null>(null);
+  const [weatherUnits, setWeatherUnits] = useState<WeatherForecastUnits>(
+    DEFAULT_WEATHER_UNITS,
+  );
   const [loadingWeather, setLoadingWeather] = useState<boolean>(true);
   const [weatherError, setWeatherError] = useState<boolean>(false);
   const [selectedHourlyDay, setSelectedHourlyDay] = useState<string>("");
@@ -58,15 +65,19 @@ function App() {
     }
   };
 
-  const handleLoadLocationWeather = async (location: GeocodingResult) => {
-    setSelectedLocation(location);
+  const loadWeatherData = async (
+    latitude: number,
+    longitude: number,
+    units: WeatherForecastUnits,
+  ) => {
     setLoadingWeather(true);
     setWeatherError(false);
 
     try {
       const weatherData = await transformWeatherForecast(
-        location.latitude,
-        location.longitude,
+        latitude,
+        longitude,
+        units,
       );
 
       setWeather(weatherData);
@@ -79,28 +90,46 @@ function App() {
     }
   };
 
+  const handleLoadLocationWeather = async (
+    location: GeocodingResult
+  ) => {
+    setSelectedLocation(location);
+
+    loadWeatherData(
+      location.latitude,
+      location.longitude,
+      weatherUnits,
+    );
+  };
+
+  const handleChangeUnits = (units: WeatherForecastUnits) => {
+    setWeatherUnits(units);
+    
+    const latitude = selectedLocation
+      ? selectedLocation.latitude
+      : DEFAULT_LOCATION.latitude;
+    const longitude = selectedLocation
+      ? selectedLocation.longitude
+      : DEFAULT_LOCATION.longitude;
+
+    loadWeatherData(latitude, longitude, units);
+  };
+
   const handleRetry = () => {
-    if(selectedLocation) {
-      handleLoadLocationWeather(selectedLocation)
+    if (selectedLocation) {
+      handleLoadLocationWeather(selectedLocation);
     } else {
-      window.location.reload()
+      window.location.reload();
     }
-  }
+  };
 
   useEffect(() => {
     const loadWeather = async () => {
-      setLoadingWeather(true);
-
-      try {
-        const data = await transformWeatherForecast(52.52437, 13.41053);
-        setWeather(data);
-        setSelectedHourlyDay(data.daily[0]?.dayKey ?? "");
-      } catch (error) {
-        console.error("Error loading default weather:", error);
-        setWeatherError(true);
-      } finally {
-        setLoadingWeather(false);
-      }
+      loadWeatherData(
+        DEFAULT_LOCATION.latitude,
+        DEFAULT_LOCATION.longitude,
+        DEFAULT_WEATHER_UNITS,
+      );
     };
 
     void loadWeather();
@@ -108,10 +137,11 @@ function App() {
 
   return (
     <>
-      <TheHeader />
+      <TheHeader units={weatherUnits} onChangeUnits={handleChangeUnits} />
 
-      
- <main className={`${weatherError ? 'items-center justify-center py-10' : 'py-28'} min-h-screen px-4 flex flex-col lg:px-20`}>
+      <main
+        className={`${weatherError ? "items-center justify-center py-10" : "py-28"} min-h-screen px-4 flex flex-col lg:px-20`}
+      >
         {weatherError ? (
           <ErrorView onClickRetry={handleRetry} />
         ) : (

@@ -4,15 +4,11 @@ import iconDots from "../assets/images/icon-dots-horizontal.svg";
 import RessumeCard from "../components/ResumeCard";
 import DailyCard from "../components/DailyCard";
 import HourlyCard from "../components/HourlyCard";
-import DropdownButton from "../components/ui/DropdownButton";
+import DaysDropdown from "../components/dropdowns/DaysDropdown"
 import type { ChangeEvent, SubmitEvent } from "react";
 import type { GeocodingResult } from "../types/geocoding";
 import type { WeatherForecastViewModel } from "../types/weatherForecast";
-
-const CURRENT_STAT_LABELS = ["Feels Like", "Humidity", "Wind", "Precipitation"];
-
-const DAILY_SKELETON_COUNT = 7;
-const HOURLY_SKELETON_COUNT = 7;
+import { CURRENT_STAT_LABELS, DAILY_SKELETON_COUNT, HOURLY_SKELETON_COUNT } from "../constants/weather";
 
 interface WeatherViewProps {
   hasSearched: boolean;
@@ -214,16 +210,14 @@ function WeatherView({
             <div className="p-4 flex justify-between items-center">
               <h4>Hourly forecast</h4>
 
-              <DropdownButton
-                type="secondary"
-                text={
-                  loadingWeather ? "-" : selectedHourlyDayLabel || "Tuesday"
-                }
+              <DaysDropdown
+                text={loadingWeather ? "-" : selectedHourlyDayLabel || "Tuesday"}
+                selectedValue={selectedHourlyDay}
+                onSelect={onSelectedHourlyDay}
                 options={weather?.daily.map((day) => ({
                   label: day.dayLong,
                   value: day.dayKey,
-                }))}
-                onSelect={onSelectedHourlyDay}
+                })) ?? []}
               />
             </div>
 

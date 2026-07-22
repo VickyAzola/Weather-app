@@ -1,24 +1,40 @@
-import { formatDate, formatDay, formatDayLong, formatHour, getDayKey } from "../helpers/dateTime";
+import {
+  formatDate,
+  formatDay,
+  formatDayLong,
+  formatHour,
+  getDayKey,
+} from "../helpers/dateTime";
 import { getWeatherIcon } from "../helpers/weatherIcon";
 import { getWeatherForecast } from "../services/weatherForecast";
 import type {
-  WeatherForecastViewModel,
   WeatherForecastCurrentStatViewItem,
+  WeatherForecastUnits,
+  WeatherForecastViewModel,
 } from "../types/weatherForecast";
+import { DEFAULT_WEATHER_UNITS } from "../constants/weather";
 
 const roundValue = (value: number) => Math.round(value).toString();
+const formatTemperature = (value: number) => `${Math.round(value)}°`;
 const formatHumidity = (value: number) => `${roundValue(value)}%`;
-const formatWindSpeed = (value: number) => `${roundValue(value)} km/h`;
-const formatPrecipitation = (value: number) => `${Number(value.toFixed(1))} mm`;
-const roundTemperature = (value: number) => `${Math.round(value)}°`;
 
+const formatWindSpeed = (
+  value: number,
+  unit: WeatherForecastUnits["windSpeedUnit"],
+) => `${roundValue(value)} ${unit === "kmh" ? "km/h" : "mph"}`;
+
+const formatPrecipitation = (
+  value: number,
+  unit: WeatherForecastUnits["precipitationUnit"],
+) => `${Math.round(value)} ${unit === "mm" ? "mm" : "in"}`;
 
 const buildCurrentStats = (
   current: Awaited<ReturnType<typeof getWeatherForecast>>["current"],
+  units: WeatherForecastUnits,
 ): WeatherForecastCurrentStatViewItem[] => [
   {
     label: "Feels Like",
-    value: roundTemperature(current.apparent_temperature),
+    value: formatTemperature(current.apparent_temperature),
   },
   {
     label: "Humidity",
@@ -26,24 +42,21 @@ const buildCurrentStats = (
   },
   {
     label: "Wind",
-    value: formatWindSpeed(current.wind_speed_10m),
+    value: formatWindSpeed(current.wind_speed_10m, units.windSpeedUnit),
   },
   {
     label: "Precipitation",
-    value: formatPrecipitation(current.precipitation),
+    value: formatPrecipitation(current.precipitation, units.precipitationUnit),
   },
 ];
 
 export const transformWeatherForecast = async (
   latitude: number,
-  longitude: number
+  longitude: number,
+  units: WeatherForecastUnits = DEFAULT_WEATHER_UNITS,
 ): Promise<WeatherForecastViewModel> => {
+  const weather = await getWeatherForecast(latitude, longitude, units);
 
-  const weather = await getWeatherForecast(
-    latitude,
-    longitude,
-  );
-  
   const currentIcon = getWeatherIcon(
     weather.current.weather_code,
     weather.current.is_day,
@@ -51,10 +64,10 @@ export const transformWeatherForecast = async (
 
   return {
     date: formatDate(weather.current.time),
-    currentTemperature: roundTemperature(weather.current.temperature_2m),
+    currentTemperature: formatTemperature(weather.current.temperature_2m),
     currentIcon: currentIcon.src,
     currentIconAlt: currentIcon.alt,
-    currentStats: buildCurrentStats(weather.current),
+    currentStats: buildCurrentStats(weather.current, units),
     hourly: weather.hourly.time.map((time, index) => {
       const icon = getWeatherIcon(
         weather.hourly.weather_code[index] ?? 0,
@@ -66,7 +79,7 @@ export const transformWeatherForecast = async (
         hour: formatHour(time),
         icon: icon.src,
         altIcon: icon.alt,
-        value: roundTemperature(weather.hourly.temperature_2m[index] ?? 0),
+        value: formatTemperature(weather.hourly.temperature_2m[index] ?? 0),
       };
     }),
     daily: weather.daily.time.map((time, index) => {
@@ -78,8 +91,8 @@ export const transformWeatherForecast = async (
         dayLong: formatDayLong(time),
         icon: icon.src,
         altIcon: icon.alt,
-        max: roundTemperature(weather.daily.temperature_2m_max[index] ?? 0),
-        min: roundTemperature(weather.daily.temperature_2m_min[index] ?? 0),
+        max: formatTemperature(weather.daily.temperature_2m_max[index] ?? 0),
+        min: formatTemperature(weather.daily.temperature_2m_min[index] ?? 0),
       };
     }),
   };

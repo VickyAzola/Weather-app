@@ -1,5 +1,9 @@
 import { fetchWeatherApi } from "openmeteo";
-import type { WeatherForecastData } from "../types/weatherForecast";
+import type {
+  WeatherForecastData,
+  WeatherForecastUnits,
+} from "../types/weatherForecast";
+import { DEFAULT_WEATHER_UNITS } from "../constants/weather";
 
 const URL = "https://api.open-meteo.com/v1/forecast";
 
@@ -7,12 +11,19 @@ const toNumberArray = (
   values: ArrayLike<number> | Iterable<number> | null | undefined,
 ) => Array.from(values ?? []);
 
-const buildParams = (latitude: number, longitude: number) => ({
+const buildParams = (
+  latitude: number,
+  longitude: number,
+  units: WeatherForecastUnits,
+) => ({
   latitude,
   longitude,
   daily: ["weather_code", "temperature_2m_max", "temperature_2m_min"],
   hourly: ["temperature_2m", "weather_code", "is_day"],
   models: "ncep_gfs_seamless",
+  temperature_unit: units.temperatureUnit,
+  wind_speed_unit: units.windSpeedUnit,
+  precipitation_unit: units.precipitationUnit,
   current: [
     "temperature_2m",
     "relative_humidity_2m",
@@ -27,8 +38,12 @@ const buildParams = (latitude: number, longitude: number) => ({
 export const getWeatherForecast = async (
   latitude: number,
   longitude: number,
+  units: WeatherForecastUnits = DEFAULT_WEATHER_UNITS,
 ): Promise<WeatherForecastData> => {
-  const responses = await fetchWeatherApi(URL, buildParams(latitude, longitude));
+  const responses = await fetchWeatherApi(
+    URL,
+    buildParams(latitude, longitude, units),
+  );
   const response = responses[0];
 
   if (!response) {

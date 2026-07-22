@@ -1,20 +1,26 @@
 import logo from "../assets/images/logo.svg";
 import iconUnits from "../assets/images/icon-units.svg";
-import DropdownButton from "../components/ui/DropdownButton";
+import UnitsDropdown from "./dropdowns/UnitsDropdown";
+import type { WeatherForecastUnits } from "../types/weatherForecast";
 
-function TheHeader() {
+interface TheHeaderProps {
+  units: WeatherForecastUnits;
+  onChangeUnits: (units: WeatherForecastUnits) => void;
+}
+
+function TheHeader({ units, onChangeUnits }: TheHeaderProps) {
   return (
-    <>
-      <header className="bg-NeutralBlue-900 fixed top-0 inset-x-0 z-20 flex gap-4 items-center justify-between p-4 lg:px-20 lg:pt-12">
-        <img src={logo} alt="Logo" className="w-34 lg:w-52" />
+    <header className="bg-NeutralBlue-900 fixed top-0 inset-x-0 z-20 flex items-center justify-between gap-4 p-4 lg:px-20 lg:pt-12">
+      <img src={logo} alt="Logo" className="w-34 lg:w-52" />
 
-        <DropdownButton
-          iconStart={iconUnits}
-          altIconStart="Units icon"
-          text="Units"
-        />
+      <UnitsDropdown
+        iconStart={iconUnits}
+        altIconStart="Units icon"
+        text="Units"
+        units={units}
+        onChangeUnits={onChangeUnits}
+      />
     </header>
-    </>
   );
 }
 
