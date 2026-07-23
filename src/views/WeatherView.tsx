@@ -87,7 +87,7 @@ function WeatherView({
                     type="button"
                     key={location.id}
                     onClick={() => onSelectedLocation(location)}
-                    className="block p-3 hover:bg-NeutralBlue-700"
+                    className="block p-3 hover:bg-NeutralBlue-700 hover:rounded-lg text-left cursor-pointer w-full"
                   >
                     {location.name}, {location.country}
                   </button>

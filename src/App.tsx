@@ -10,6 +10,7 @@ import type {
 import WeatherView from "./views/WeatherView";
 import ErrorView from "./views/ErrorView";
 import { DEFAULT_LOCATION, DEFAULT_WEATHER_UNITS } from "./constants/weather";
+import TheFooter from "./components/TheFooter";
 
 function App() {
   const [hasSearched, setHasSearched] = useState<boolean>(false);
@@ -140,7 +141,7 @@ function App() {
       <TheHeader units={weatherUnits} onChangeUnits={handleChangeUnits} />
 
       <main
-        className={`${weatherError ? "items-center justify-center py-10" : "py-28"} min-h-screen px-4 flex flex-col lg:px-20`}
+        className={`${weatherError ? "items-center justify-center py-10" : "pt-28 pb-16"} min-h-screen px-4 flex flex-col lg:px-20`}
       >
         {weatherError ? (
           <ErrorView onClickRetry={handleRetry} />
@@ -160,6 +161,8 @@ function App() {
           />
         )}
       </main>
+
+      <TheFooter />
     </>
   );
 }
