@@ -14,7 +14,7 @@ Weather App es una página estática e interactiva que permite buscar ubicacione
 
 La aplicación inicia con la información de Berlin, Germany, y luego permite buscar otras ubicaciones para actualizar los datos mostrados en pantalla.
 
-[Revisa la página aquí](#)
+[Revisa la página aquí](https://weather-app-tailwindreact.netlify.app/)
 
 ![preview](https://github.com/user-attachments/assets/00d6c12a-4ecd-40b5-bd27-15c3a34e81cb)
 
