@@ -52,6 +52,6 @@ La aplicación inicia con la información de Berlin, Germany, y luego permite bu
 
 ## Autores
 
-- **Desarrollador**: [Victoria Azola Silva](https://github.com/VickyAzola) - Responsable del desarrollo del código.
+- **Desarrolladora**: [Victoria Azola Silva](https://github.com/VickyAzola) - Responsable del desarrollo del código.
 - **Diseño Base**: [Frontend Mentor](https://www.frontendmentor.io/) - Inspiración visual y estructura general del desafío.
 - **APIs**: [Open-Meteo](https://open-meteo.com/) - Servicio de datos meteorológicos y geocoding.
