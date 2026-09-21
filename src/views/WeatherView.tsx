@@ -61,7 +61,9 @@ function WeatherView({
         className="flex flex-col lg:flex-row gap-2.5 items-center justify-center"
       >
         <div className="relative w-full lg:w-lg">
+          <label htmlFor="search" className="sr-only">Search for a place</label>
           <input
+            id="search"
             type="search"
             name="search"
             placeholder="Search for a place..."
