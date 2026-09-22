@@ -11,11 +11,10 @@ interface TheHeaderProps {
 function TheHeader({ units, onChangeUnits }: TheHeaderProps) {
   return (
     <header className="bg-NeutralBlue-900 fixed top-0 inset-x-0 z-20 flex items-center justify-between gap-4 p-4 lg:px-20 lg:pt-12">
-      <img src={logo} alt="Logo" className="w-34 lg:w-52" />
+      <img src={logo} alt="" className="w-34 lg:w-52" />
 
       <UnitsDropdown
         iconStart={iconUnits}
-        altIconStart="Units icon"
         text="Units"
         units={units}
         onChangeUnits={onChangeUnits}

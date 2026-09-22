@@ -18,6 +18,7 @@ const buildParams = (
 ) => ({
   latitude,
   longitude,
+  timezone: "auto",
   daily: ["weather_code", "temperature_2m_max", "temperature_2m_min"],
   hourly: ["temperature_2m", "weather_code", "is_day"],
   models: "ncep_gfs_seamless",

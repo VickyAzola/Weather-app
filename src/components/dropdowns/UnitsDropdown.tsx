@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import iconCheckmark from "../../assets/images/icon-checkmark.svg";
 import iconDropdown from "../../assets/images/icon-dropdown.svg";
 import type {
@@ -10,7 +10,6 @@ import type {
 
 interface UnitsDropdownProps {
   iconStart: string;
-  altIconStart: string;
   text: string;
   units: WeatherForecastUnits;
   onChangeUnits: (units: WeatherForecastUnits) => void;
@@ -25,12 +24,13 @@ type UnitSection = {
 
 function UnitsDropdown({
   iconStart,
-  altIconStart,
   text,
   units,
   onChangeUnits,
 }: UnitsDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
 
   const isMetric =
     units.temperatureUnit === "celsius" &&
@@ -64,9 +64,8 @@ function UnitsDropdown({
       applyMetricUnits();
     }
 
-    setTimeout(() => {
-      setIsOpen(false);
-    }, 600);
+    setIsOpen(false);
+    triggerRef.current?.focus();
   };
 
   const sections: UnitSection[] = [
@@ -111,30 +110,57 @@ function UnitsDropdown({
     },
   ];
 
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsOpen(false);
+        triggerRef.current?.focus();
+      }
+    };
+
+    const handlePointerDown = (event: PointerEvent) => {
+      if (!wrapperRef.current?.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener("pointerdown", handlePointerDown);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener("pointerdown", handlePointerDown);
+    };
+  }, [isOpen]);
+
   return (
-    <div className="relative">
+    <div ref={wrapperRef} className="relative">
       <button
+        ref={triggerRef}
         type="button"
+        aria-expanded={isOpen}
+        aria-controls="units-dropdown"
         onClick={() => setIsOpen((current) => !current)}
         className="bg-NeutralBlue-800 gap-1.5 px-2 lg:px-4 lg:py-2 lg:gap-2 py-1.5 flex items-center rounded-md cursor-pointer transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-NeutralWhite-0/90 focus:ring-offset-2 focus:ring-offset-NeutralBlue-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-NeutralWhite-0/90 focus-visible:ring-offset-2 focus-visible:ring-offset-NeutralBlue-900"
       >
-        {iconStart && <img src={iconStart} alt={altIconStart} />}
+        {iconStart && <img src={iconStart} alt="" />}
         <p className="text-NeutralWhite-0 text-sm lg:text-base">{text}</p>
         <img
           src={iconDropdown}
-          alt="Dropdown Icon"
-          className={`transition-transform duration-300 ease-out ${
-            isOpen ? "rotate-180" : "rotate-0"
-          }`}
+          alt=""
+          className={`transition-transform duration-300 ease-out ${isOpen ? "rotate-180" : "rotate-0"
+            }`}
         />
       </button>
 
       <div
-        className={`absolute right-0 z-10 mt-2 origin-top-right overflow-hidden rounded-lg border border-NeutralBlue-600 bg-NeutralBlue-800 text-NeutralWhite-0 transition-all duration-300 ease-out ${
-          isOpen
-            ? "visible max-h-150 scale-100 opacity-100"
-            : "pointer-events-none invisible max-h-0 scale-95 opacity-0"
-        } min-w-52 p-1`}
+        id="units-dropdown"
+        className={`absolute right-0 z-10 mt-2 origin-top-right overflow-hidden rounded-lg border border-NeutralBlue-600 bg-NeutralBlue-800 text-NeutralWhite-0 transition-all duration-300 ease-out ${isOpen
+          ? "visible max-h-150 scale-100 opacity-100"
+          : "pointer-events-none invisible max-h-0 scale-95 opacity-0"
+          } min-w-52 p-1`}
       >
         <button
           type="button"
@@ -163,12 +189,13 @@ function UnitsDropdown({
                   onClick={() => {
                     section.onSelect(option.value);
                     setIsOpen(false);
+                    triggerRef.current?.focus();
                   }}
                   className="flex w-full cursor-pointer items-center justify-between rounded-md px-2 py-2 text-left text-sm font-semibold transition-colors duration-200 hover:bg-NeutralBlue-700 focus:bg-NeutralBlue-700 focus:outline-none focus:ring-1 focus:ring-inset focus:ring-NeutralWhite-0/80 focus-visible:bg-NeutralBlue-700 focus-visible:outline-none focus-visible:ring-1"
                 >
                   <span>{option.label}</span>
                   {isSelected && (
-                    <img src={iconCheckmark} alt="Selected option" />
+                    <img src={iconCheckmark} alt="" />
                   )}
                 </button>
               );

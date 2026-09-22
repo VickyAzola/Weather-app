@@ -72,7 +72,7 @@ function WeatherView({
           />
           <img
             src={iconSearch}
-            alt="Search icon"
+            alt=""
             className="absolute bottom-4 left-5 pointer-events-none"
           />
 
@@ -80,7 +80,7 @@ function WeatherView({
             <div className="absolute top-16 left-0 w-full lg:w-lg bg-NeutralBlue-800 text-NeutralWhite-0 rounded-lg p-3 border border-NeutralBlue-600">
               {loadingLocation ? (
                 <div className="flex gap-3">
-                  <img src={iconLoading} alt="Loading Icon" />
+                  <img src={iconLoading} alt="" />
                   <p>Search in progres</p>
                 </div>
               ) : (
@@ -124,7 +124,7 @@ function WeatherView({
               >
                 {loadingWeather ? (
                   <div className="flex flex-col items-center justify-center gap-2">
-                    <img src={iconDots} alt="Loading" className="w-16" />
+                    <img src={iconDots} alt="" className="w-16" />
                     <p className="text-NeutralWhite-0">Loading...</p>
                   </div>
                 ) : (

@@ -1,57 +1,74 @@
 # Weather App
 
-## Tabla de Contenidos
+Aplicación web responsive para consultar el clima actual y el pronóstico por hora y por día de distintas ubicaciones.
 
-- [Descripción](#descripción)
-- [Tecnologías Utilizadas](#tecnologías-utilizadas)
-- [APIs Utilizadas](#apis-utilizadas)
-- [Instalación](#instalación)
-- [Autores](#autores)
+[Ver demo en vivo](https://weather-app-tailwindreact.netlify.app/)
 
-## Descripción
+![Vista previa de Weather App con el clima actual y el pronóstico semanal](https://github.com/user-attachments/assets/00d6c12a-4ecd-40b5-bd27-15c3a34e81cb)
 
-Weather App es una página estática e interactiva que permite buscar ubicaciones y visualizar el clima actual, el pronóstico por hora y el pronóstico diario.
+## Características
 
-La aplicación inicia con la información de Berlin, Germany, y luego permite buscar otras ubicaciones para actualizar los datos mostrados en pantalla.
+- Consulta del clima actual, pronóstico por hora y pronóstico diario.
+- Búsqueda de ubicaciones con la API de geocodificación de Open-Meteo.
+- Cambio entre unidades métricas e imperiales.
+- Estados de carga, resultados vacíos y errores de conexión.
+- Diseño responsive para móvil y escritorio.
 
-[Revisa la página aquí](https://weather-app-tailwindreact.netlify.app/)
+## Tecnologías
 
-![preview](https://github.com/user-attachments/assets/00d6c12a-4ecd-40b5-bd27-15c3a34e81cb)
+- **React** para la interfaz y el manejo de estado.
+- **TypeScript** para el tipado y la mantenibilidad.
+- **Tailwind CSS** para los estilos.
+- **Vite** como entorno de desarrollo y herramienta de compilación.
+- **Open-Meteo SDK** para consumir el pronóstico meteorológico.
 
-## Tecnologías Utilizadas
+## APIs
 
-- **HTML5**: Para la estructura del sitio web.
-- **CSS / Tailwind CSS**: Para el diseño y la presentación visual.
-- **TypeScript**: Para tipado fuerte y mejor mantenibilidad.
-- **React**: Para la construcción de componentes y el manejo de estado.
+- [Open-Meteo Geocoding API](https://open-meteo.com/en/docs/geocoding-api): búsqueda de ciudades y coordenadas.
+- [Open-Meteo Forecast API](https://open-meteo.com/en/docs): datos actuales y pronósticos meteorológicos.
 
-## APIs Utilizadas
+## Arquitectura
 
-- **Open-Meteo Geocoding API**: Para buscar ciudades y obtener sus coordenadas.
-- **Open-Meteo Weather Forecast API**: Para obtener la información del clima actual, por hora y por día.
+La aplicación separa la obtención, transformación y presentación de los datos:
+
+- `src/services/`: consulta las APIs y devuelve datos meteorológicos sin transformar.
+- `src/composables/`: convierte los datos en un modelo preparado para la interfaz.
+- `src/helpers/`: centraliza el formato de fechas, horas e iconos meteorológicos.
+- `src/components/` y `src/views/`: renderizan los datos ya formateados.
 
 ## Instalación
 
-1. **Clonar el repositorio**:
+1. Clona el repositorio:
+
    ```bash
    git clone git@github.com:VickyAzola/Weather-app.git
    ```
-2. **Navega al directorio del proyecto**:
+
+2. Entra al directorio del proyecto:
+
    ```bash
    cd Weather-app
    ```
-3. **Instala las dependencias**:
+
+3. Instala las dependencias:
+
    ```bash
    npm install
    ```
-4. **Inicia el servidor de desarrollo**:
+
+4. Inicia el servidor de desarrollo:
+
    ```bash
    npm run dev
    ```
-5. Abre el enlace `Local` que aparece en la terminal.
 
-## Autores
+5. Abre la URL `Local` que Vite muestra en la terminal.
 
-- **Desarrolladora**: [Victoria Azola Silva](https://github.com/VickyAzola) - Responsable del desarrollo del código.
-- **Diseño Base**: [Frontend Mentor](https://www.frontendmentor.io/) - Inspiración visual y estructura general del desafío.
-- **APIs**: [Open-Meteo](https://open-meteo.com/) - Servicio de datos meteorológicos y geocoding.
+## Créditos
+
+- Diseño basado en el desafío [Weather App de Frontend Mentor](https://www.frontendmentor.io/challenges/weather-app-K1FhddVm49).
+- Datos meteorológicos proporcionados por [Open-Meteo](https://open-meteo.com/).
+
+## Autora
+
+[Victoria Azola Silva](https://github.com/VickyAzola)

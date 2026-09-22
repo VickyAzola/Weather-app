@@ -8,7 +8,7 @@ interface ErrorViewProps {
 function ErrorView({ onClickRetry }: ErrorViewProps) {
   return (
     <>
-      <img src={iconError} alt="Error Icon" className="w-12" />
+      <img src={iconError} alt="" className="w-12" />
       <h1 className="text-5xl my-4 text-center text-NeutralWhite-0 font-display-BricolageGrotesque">
         Something went wrong
       </h1>
@@ -22,7 +22,7 @@ function ErrorView({ onClickRetry }: ErrorViewProps) {
         onClick={onClickRetry}
         className="flex gap-2 py-2 px-4 mt-4 rounded-lg bg-NeutralBlue-800 text-NeutralWhite-0 cursor-pointer"
       >
-        <img src={iconRetry} alt="Retry Icon" />
+        <img src={iconRetry}/>
         <p>Retry</p>
       </button>
     </>

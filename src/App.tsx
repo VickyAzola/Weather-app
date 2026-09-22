@@ -1,6 +1,12 @@
 import TheHeader from "./components/TheHeader";
 import searchLocation from "./services/geocoding";
-import { useState, useEffect, type SubmitEvent, type ChangeEvent } from "react";
+import {
+  useState,
+  useEffect,
+  useRef,
+  type SubmitEvent,
+  type ChangeEvent,
+} from "react";
 import type { GeocodingResult } from "./types/geocoding";
 import { transformWeatherForecast } from "./composables/weatherForecast";
 import type {
@@ -25,6 +31,8 @@ function App() {
   const [loadingWeather, setLoadingWeather] = useState<boolean>(true);
   const [weatherError, setWeatherError] = useState<boolean>(false);
   const [selectedHourlyDay, setSelectedHourlyDay] = useState<string>("");
+  const locationRequestId = useRef(0);
+  const weatherRequestId = useRef(0);
 
   const handleSearchLocations = async (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -34,6 +42,8 @@ function App() {
     ).trim();
     if (!query) return;
 
+    const requestId = ++locationRequestId.current;
+
     setSelectedLocation(null);
     setLoadingLocation(true);
     setLocations([]);
@@ -42,17 +52,22 @@ function App() {
     try {
       const location = await searchLocation(query);
 
+      if (requestId !== locationRequestId.current) return;
+
       if ("error" in location) {
         console.error(location.reason);
-        setLoadingLocation(false);
         return;
       }
 
       setLocations(location.results ?? []);
     } catch (error) {
-      console.error("Error searching location:", error);
+      if (requestId === locationRequestId.current) {
+        console.error("Error searching location:", error);
+      }
     } finally {
-      setLoadingLocation(false);
+      if (requestId === locationRequestId.current) {
+        setLoadingLocation(false);
+      }
     }
   };
 
@@ -60,6 +75,7 @@ function App() {
     const value = e.target.value;
 
     if (!value.trim()) {
+      locationRequestId.current += 1;
       setHasSearched(false);
       setLocations([]);
       setLoadingLocation(false);
@@ -71,6 +87,7 @@ function App() {
     longitude: number,
     units: WeatherForecastUnits,
   ) => {
+    const requestId = ++weatherRequestId.current;
     setLoadingWeather(true);
     setWeatherError(false);
 
@@ -81,13 +98,19 @@ function App() {
         units,
       );
 
+      if (requestId !== weatherRequestId.current) return;
+
       setWeather(weatherData);
       setSelectedHourlyDay(weatherData.daily[0]?.dayKey ?? "");
     } catch (error) {
-      console.error("Error loading weather:", error);
-      setWeatherError(true);
+      if (requestId === weatherRequestId.current) {
+        console.error("Error loading weather:", error);
+        setWeatherError(true);
+      }
     } finally {
-      setLoadingWeather(false);
+      if (requestId === weatherRequestId.current) {
+        setLoadingWeather(false);
+      }
     }
   };
 
