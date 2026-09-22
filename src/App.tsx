@@ -30,6 +30,9 @@ function App() {
   );
   const [loadingWeather, setLoadingWeather] = useState<boolean>(true);
   const [weatherError, setWeatherError] = useState<boolean>(false);
+  const [locationSearchError, setLocationSearchError] = useState<string | null>(
+    null,
+  );
   const [selectedHourlyDay, setSelectedHourlyDay] = useState<string>("");
   const locationRequestId = useRef(0);
   const weatherRequestId = useRef(0);
@@ -48,6 +51,7 @@ function App() {
     setLoadingLocation(true);
     setLocations([]);
     setHasSearched(true);
+    setLocationSearchError(null);
 
     try {
       const location = await searchLocation(query);
@@ -56,6 +60,9 @@ function App() {
 
       if ("error" in location) {
         console.error(location.reason);
+        setLocationSearchError(
+          location.reason || "We couldn't search for locations. Please try again.",
+        );
         return;
       }
 
@@ -63,6 +70,9 @@ function App() {
     } catch (error) {
       if (requestId === locationRequestId.current) {
         console.error("Error searching location:", error);
+        setLocationSearchError(
+          "We couldn't search for locations. Please check your connection and try again.",
+        );
       }
     } finally {
       if (requestId === locationRequestId.current) {
@@ -128,7 +138,7 @@ function App() {
 
   const handleChangeUnits = (units: WeatherForecastUnits) => {
     setWeatherUnits(units);
-    
+
     const latitude = selectedLocation
       ? selectedLocation.latitude
       : DEFAULT_LOCATION.latitude;
@@ -174,6 +184,7 @@ function App() {
             loadingLocation={loadingLocation}
             locations={locations}
             selectedLocation={selectedLocation}
+            locationSearchError={locationSearchError}
             weather={weather}
             loadingWeather={loadingWeather}
             selectedHourlyDay={selectedHourlyDay}

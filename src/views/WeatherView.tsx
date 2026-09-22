@@ -1,7 +1,7 @@
 import iconSearch from "../assets/images/icon-search.svg";
 import iconLoading from "../assets/images/icon-loading.svg";
 import iconDots from "../assets/images/icon-dots-horizontal.svg";
-import RessumeCard from "../components/ResumeCard";
+import ResumeCard from "../components/ResumeCard";
 import DailyCard from "../components/DailyCard";
 import HourlyCard from "../components/HourlyCard";
 import DaysDropdown from "../components/dropdowns/DaysDropdown"
@@ -15,6 +15,7 @@ interface WeatherViewProps {
   loadingLocation: boolean;
   locations: GeocodingResult[];
   selectedLocation: GeocodingResult | null;
+  locationSearchError: string | null;
   weather: WeatherForecastViewModel | null;
   loadingWeather: boolean;
   selectedHourlyDay: string;
@@ -29,6 +30,7 @@ function WeatherView({
   loadingLocation,
   locations,
   selectedLocation,
+  locationSearchError,
   weather,
   loadingWeather,
   selectedHourlyDay,
@@ -41,7 +43,7 @@ function WeatherView({
     hasSearched &&
     !selectedLocation &&
     (loadingLocation || locations.length > 0);
-  const showNoResults = hasSearched && !loadingLocation && !locations.length;
+  const showNoResults = hasSearched && !loadingLocation && !locationSearchError && !locations.length;
 
   const selectedHourlyDayLabel =
     weather?.daily.find((day) => day.dayKey === selectedHourlyDay)?.dayLong ??
@@ -79,9 +81,9 @@ function WeatherView({
           {showLocationDropdown && (
             <div className="absolute top-16 left-0 w-full lg:w-lg bg-NeutralBlue-800 text-NeutralWhite-0 rounded-lg p-3 border border-NeutralBlue-600">
               {loadingLocation ? (
-                <div className="flex gap-3">
+                <div role="status" className="flex gap-3">
                   <img src={iconLoading} alt="" />
-                  <p>Search in progres</p>
+                  <p>Search in progress</p>
                 </div>
               ) : (
                 locations.map((location) => (
@@ -107,78 +109,82 @@ function WeatherView({
         </button>
       </form>
 
-      {showNoResults ? (
-        <h2 className="text-xl font-semibold text-center text-NeutralWhite-0 mt-8">
-          No search result found!
-        </h2>
-      ) : (
-        <div className="lg:flex lg:gap-8 lg:mt-4">
-          <div className="lg:w-2/3">
-            <section className="mt-8">
-              <div
-                className={`${
-                  loadingWeather
-                    ? "bg-NeutralBlue-800 animate-pulse"
-                    : "lg:p-8 bg-[url('./assets/images/bg-today-small.svg')] lg:bg-[url('./assets/images/bg-today-large.svg')]"
-                } flex flex-col lg:flex-row items-center justify-center p-4 h-72 w-full bg-cover bg-no-repeat rounded-2xl`}
-              >
-                {loadingWeather ? (
-                  <div className="flex flex-col items-center justify-center gap-2">
-                    <img src={iconDots} alt="" className="w-16" />
-                    <p className="text-NeutralWhite-0">Loading...</p>
-                  </div>
-                ) : (
-                  <>
-                    <div className="text-center lg:text-left w-full">
-                      <h2 className="text-NeutralWhite-0 text-3xl font-semibold">
-                        {selectedLocation
-                          ? `${selectedLocation.name}, ${selectedLocation.country}`
-                          : "Berlin, Germany"}
-                      </h2>
-
-                      <p className="text-NeutralGray-200 pt-1">
-                        {weather && weather.date}
-                      </p>
+      {locationSearchError ? (
+        <div role="alert" className="mt-8 text-center text-NeutralWhite-0">
+          <p>{locationSearchError}</p>
+        </div>
+      ) :
+        showNoResults ? (
+          <h2  role="status" className="text-xl font-semibold text-center text-NeutralWhite-0 mt-8">
+            No search result found!
+          </h2>
+        ) : (
+          <div className="lg:flex lg:gap-8 lg:mt-4">
+            <div className="lg:w-2/3">
+              <section aria-busy={loadingWeather} className="mt-8">
+                <div
+                  className={`${loadingWeather
+                      ? "bg-NeutralBlue-800 animate-pulse"
+                      : "lg:p-8 bg-[url('./assets/images/bg-today-small.svg')] lg:bg-[url('./assets/images/bg-today-large.svg')]"
+                    } flex flex-col lg:flex-row items-center justify-center p-4 h-72 w-full bg-cover bg-no-repeat rounded-2xl`}
+                >
+                  {loadingWeather ? (
+                    <div role="status" className="flex flex-col items-center justify-center gap-2">
+                      <img src={iconDots} alt="" className="w-16" />
+                      <p className="text-NeutralWhite-0">Loading...</p>
                     </div>
-                    <div className="flex items-center gap-2 pt-4">
-                      {weather && (
-                        <img
-                          src={weather.currentIcon}
-                          alt={weather.currentIconAlt}
-                          className="max-w-32"
-                        />
-                      )}
-                      <p className="text-7xl sm:text-8xl font-semibold italic text-NeutralWhite-0">
-                        {weather && weather.currentTemperature}
-                      </p>
-                    </div>
-                  </>
-                )}
-              </div>
+                  ) : (
+                    <>
+                      <div className="text-center lg:text-left w-full">
+                        <h2 className="text-NeutralWhite-0 text-3xl font-semibold">
+                          {selectedLocation
+                            ? `${selectedLocation.name}, ${selectedLocation.country}`
+                            : "Berlin, Germany"}
+                        </h2>
 
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mt-4 lg:mt-6">
-                {(loadingWeather
-                  ? CURRENT_STAT_LABELS.map((label) => ({ label, value: "" }))
-                  : (weather?.currentStats ?? [])
-                ).map((item) => (
-                  <RessumeCard
-                    key={item.label}
-                    loading={loadingWeather}
-                    title={item.label}
-                    value={item.value}
-                  />
-                ))}
-              </div>
-            </section>
+                        <p className="text-NeutralGray-200 pt-1">
+                          {weather && weather.date}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-2 pt-4">
+                        {weather && (
+                          <img
+                            src={weather.currentIcon}
+                            alt={weather.currentIconAlt}
+                            className="max-w-32"
+                          />
+                        )}
+                        <p className="text-7xl sm:text-8xl font-semibold italic text-NeutralWhite-0">
+                          {weather && weather.currentTemperature}
+                        </p>
+                      </div>
+                    </>
+                  )}
+                </div>
 
-            <section className="mt-8">
-              <h3 className="text-NeutralWhite-0 font-semibold">
-                Daily forecast
-              </h3>
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mt-4 lg:mt-6">
+                  {(loadingWeather
+                    ? CURRENT_STAT_LABELS.map((label) => ({ label, value: "" }))
+                    : (weather?.currentStats ?? [])
+                  ).map((item) => (
+                    <ResumeCard
+                      key={item.label}
+                      loading={loadingWeather}
+                      title={item.label}
+                      value={item.value}
+                    />
+                  ))}
+                </div>
+              </section>
 
-              <div className="grid grid-cols-3 lg:grid-cols-7 gap-4 mt-4">
-                {(loadingWeather
-                  ? Array.from(
+              <section aria-busy={loadingWeather} className="mt-8">
+                <h3 className="text-NeutralWhite-0 font-semibold">
+                  Daily forecast
+                </h3>
+
+                <div className="grid grid-cols-3 lg:grid-cols-7 gap-4 mt-4">
+                  {(loadingWeather
+                    ? Array.from(
                       { length: DAILY_SKELETON_COUNT },
                       (_, index) => ({
                         dayShort: `day-${index}`,
@@ -188,64 +194,63 @@ function WeatherView({
                         min: "",
                       }),
                     )
-                  : (weather?.daily ?? [])
-                ).map((day, index) => (
-                  <DailyCard
-                    key={`${day.dayShort}-${index}`}
-                    loading={loadingWeather}
-                    day={day.dayShort}
-                    icon={day.icon}
-                    altIcon={day.altIcon}
-                    max={day.max}
-                    min={day.min}
-                  />
-                ))}
-              </div>
-            </section>
-          </div>
-
-          <section
-            className={`${
-              loadingWeather && "animate-pulse"
-            } mt-8 pb-4 bg-NeutralBlue-800 rounded-xl text-NeutralWhite-0 lg:w-1/3`}
-          >
-            <div className="p-4 flex justify-between items-center">
-              <h4>Hourly forecast</h4>
-
-              <DaysDropdown
-                text={loadingWeather ? "-" : selectedHourlyDayLabel || "Tuesday"}
-                selectedValue={selectedHourlyDay}
-                onSelect={onSelectedHourlyDay}
-                options={weather?.daily.map((day) => ({
-                  label: day.dayLong,
-                  value: day.dayKey,
-                })) ?? []}
-              />
+                    : (weather?.daily ?? [])
+                  ).map((day, index) => (
+                    <DailyCard
+                      key={`${day.dayShort}-${index}`}
+                      loading={loadingWeather}
+                      day={day.dayShort}
+                      icon={day.icon}
+                      altIcon={day.altIcon}
+                      max={day.max}
+                      min={day.min}
+                    />
+                  ))}
+                </div>
+              </section>
             </div>
 
-            <div className="flex flex-col gap-4 h-125 lg:h-145 px-4 overflow-y-scroll">
-              {(loadingWeather
-                ? Array.from({ length: HOURLY_SKELETON_COUNT }, (_, index) => ({
+            <section aria-busy={loadingWeather} 
+              className={`${loadingWeather && "animate-pulse"
+                } mt-8 pb-4 bg-NeutralBlue-800 rounded-xl text-NeutralWhite-0 lg:w-1/3`}
+            >
+              <div className="p-4 flex justify-between items-center">
+                <h3>Hourly forecast</h3>
+
+                <DaysDropdown
+                  text={loadingWeather ? "-" : selectedHourlyDayLabel || "Tuesday"}
+                  selectedValue={selectedHourlyDay}
+                  onSelect={onSelectedHourlyDay}
+                  options={weather?.daily.map((day) => ({
+                    label: day.dayLong,
+                    value: day.dayKey,
+                  })) ?? []}
+                />
+              </div>
+
+              <div className="flex flex-col gap-4 h-125 lg:h-145 px-4 overflow-y-scroll">
+                {(loadingWeather
+                  ? Array.from({ length: HOURLY_SKELETON_COUNT }, (_, index) => ({
                     hour: `hour-${index}`,
                     icon: "",
                     altIcon: "",
                     value: "",
                   }))
-                : hourlyToShow
-              ).map((hour, index) => (
-                <HourlyCard
-                  key={`${hour.hour}-${index}`}
-                  loading={loadingWeather}
-                  hour={hour.hour}
-                  value={hour.value}
-                  icon={hour.icon}
-                  altIcon={hour.altIcon}
-                />
-              ))}
-            </div>
-          </section>
-        </div>
-      )}
+                  : hourlyToShow
+                ).map((hour, index) => (
+                  <HourlyCard
+                    key={`${hour.hour}-${index}`}
+                    loading={loadingWeather}
+                    hour={hour.hour}
+                    value={hour.value}
+                    icon={hour.icon}
+                    altIcon={hour.altIcon}
+                  />
+                ))}
+              </div>
+            </section>
+          </div>
+        )}
     </>
   );
 }

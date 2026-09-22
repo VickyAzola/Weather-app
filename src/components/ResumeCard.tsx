@@ -1,12 +1,12 @@
 
-interface RessumeCardProps {
+interface ResumeCardProps {
   loading: boolean;
     title: string;
     value: string;
 }
 
 
-function RessumeCard({loading, title, value}: RessumeCardProps) {
+function ResumeCard({loading, title, value}: ResumeCardProps) {
   return (
     <>
     <div className={`${loading && 'animate-pulse'}
@@ -18,4 +18,4 @@ function RessumeCard({loading, title, value}: RessumeCardProps) {
   );
 }
 
-export default RessumeCard;
+export default ResumeCard;
